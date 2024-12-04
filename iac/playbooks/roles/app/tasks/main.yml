@@ -1,0 +1,113 @@
+- name: Create application directory
+  file:
+    path: /opt/userapi
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Install and configure Apache
+  apt:
+    name: apache2
+    state: present
+  when: ansible_pkg_mgr == "apt"
+
+- name: Enable and start Apache
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Create configuration directory
+  file:
+    path: /opt/userapi/conf
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Copy application configuration
+  copy:
+    src: /vagrant/userapi/conf/default.json
+    dest: /opt/userapi/conf/default.json
+  become: true
+
+- name: Create source directory
+  file:
+    path: /opt/userapi/src
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Copy application source code
+  copy:
+    src: /vagrant/userapi/src/
+    dest: /opt/userapi/src/
+    remote_src: yes  
+  become: true
+
+- name: Create tests directory
+  file:
+    path: /opt/userapi/test
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Copy test files 
+  copy:
+    src: /vagrant/userapi/test/
+    dest: /opt/userapi/test/
+    remote_src: yes  
+  become: true
+
+- name: Copy start script
+  copy:
+    src: /vagrant/userapi/src/start.sh
+    dest: /opt/userapi/src/
+  become: true
+
+- name: Make start script executable
+  file:
+    path: /opt/userapi/src/start.sh
+    state: file
+    mode: 0755
+  become: true
+
+- name: Copy userapi files 
+  copy:
+    src: /vagrant/userapi/
+    dest: /opt/userapi/
+    remote_src: yes  
+  become: true
+
+- name: Install Node dependencies
+  npm:
+    path: /vagrant/userapi
+    state: present
+
+- name: Copy application enviroment
+  copy:
+    src: /vagrant/userapi/.env
+    dest: /vagrant/userapi/.env
+  become: true
+
+- name: Start application using npm
+  command: npm start
+  args:
+    chdir: /opt/userapi
+  async: 1 
+  poll: 0
+  register: app_start_result
+
+- name: Wait for application to start
+  wait_for:
+    host: localhost
+    port: 3000
+    timeout: 120 
+
+- name: Check if application is running
+  command: pgrep -f "npm start"
+  register: app_process
+  changed_when: false
+
+- name: Check if the application started successfully
+  debug:
+    msg: "App start result: {{ app_start_result }}"

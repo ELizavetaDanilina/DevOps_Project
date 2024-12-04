@@ -1,0 +1,31 @@
+- name: Check application health
+  uri:
+    url: http://localhost:3000/health
+    status_code: 200
+  register: health_check_result
+
+- debug:
+    msg: "Application health check: {{ health_check_result.status }}"
+  when: health_check_result.status != "OK"
+
+- name: Check Application Readiness
+  uri:
+    url: http://localhost:3000/readiness
+    status_code: 200
+
+  register: gitlab_readiness
+
+- debug:
+    msg: "Application Readiness: {{ gitlab_readiness.status }}"
+  when: gitlab_readiness.status != "OK"
+
+
+- name: Check Application Liveness
+  uri:
+    url: http://localhost:3000/liveness
+    status_code: 200
+  register: gitlab_liveness
+
+- debug:
+    msg: "Application Liveness: {{ gitlab_liveness.status }}"
+  when: gitlab_liveness.status != "OK"

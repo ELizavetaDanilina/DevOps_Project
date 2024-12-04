@@ -1,0 +1,35 @@
+- name: Install Redis
+  apt:
+    name: redis-server
+    state: present
+  tags: install
+
+- name: Check if Redis is installed
+  command: redis-server --version
+  register: redis_version
+  ignore_errors: true
+
+- debug:
+    var: redis_version.stdout
+
+
+- name: Ensure Redis service is enabled and running
+  service:
+    name: redis-server
+    state: started
+    enabled: yes
+  tags: install
+
+- name: Allow Redis connections from anywhere 
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^bind'
+    line: 'bind 127.0.0.1'
+  tags: install
+
+- name: Restart Redis to apply configuration changes
+  service:
+    name: redis-server
+    state: restarted
+  tags: install
+

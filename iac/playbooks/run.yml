@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  become: true
+  roles:
+    - role: common
+      tags: install
+    - role: language
+      tags: install
+    - role: database
+      tags: install
+    - role: app
+      tags: install
+    - role: healthcheck
+      tags: check
