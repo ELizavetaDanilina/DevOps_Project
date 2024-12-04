@@ -1,0 +1,126 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "User API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/user": {
+      "post": {
+        "summary": "Create a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {"type": "string"},
+                  "firstname": {"type": "string"},
+                  "lastname": { "type": "string" },
+                  "email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "User already exist"
+          }
+        }
+      },
+
+      "get": {
+         "summary": "Get all users",
+         "responses": {
+           "200":{
+             "description": "A list of users"
+           },
+           "400": {
+              "description": "User not found"
+           }
+         }
+      }
+    },
+
+    "/user/{username}": {
+      "get": {
+        "summary": "Get a user by Username",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The Username of the user to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully"
+          },
+          "400": {
+             "description": "User not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a user by ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "required": true,
+            "description": "The ID of the user to update"
+          }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {"type": "string"},
+                  "firstname": {"type": "string"},
+                  "lastname": { "type": "string" },
+                  "email": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "User updated"
+          },
+          "400": {
+             "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user by ID",
+        "parameters": [
+          {
+          "in": "path",
+          "name": "username"
+          }],
+        "required": true,
+        "description": "The ID of the user to delete",
+        "responses": {
+          "204": {
+            "description": "User deleted"
+          },
+          "400": {
+             "description": "User not found"
+          }
+        }
+      }
+    }
+  }
+}
+

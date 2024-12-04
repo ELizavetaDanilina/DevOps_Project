@@ -1,0 +1,32 @@
+{
+  "name": "devops-final-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/*.js",
+    "start": "node -r dotenv/config src/index.js"
+  },
+  "keywords": [],
+  "author": "DANILINA Elizaveta",
+  "license": "ISC",
+  "description": "DevOps Final Project",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.6",
+    "express": "^4.18.2",
+    "mixme": "^0.5.4",
+    "redis": "^3.1.2",
+    "swagger-ui-express": "^4.6.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "eslint": "^8.9.0",
+    "eslint-plugin-mocha": "^10.0.3",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
+  },
+  "mocha": {
+    "timeout": 10000
+  }
+}
