@@ -1,0 +1,60 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # CI part
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ''
+
+      - name: Install dependencies in userapi
+        run: |
+          cd userapi
+          npm install
+
+      - name: Run tests
+        run: |
+          cd userapi
+          npm test
+
+      - name: Start application with timeout
+        run: |
+          cd userapi
+          timeout 60s npm start
+          
+    services:
+      redis-container:
+        image: redis
+        ports:
+          - 6379:6379
+
+  # #CD part with Heroku
+  # deploy:
+  #   needs: test 
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: akhileshns/heroku-deploy@v3.12.12
+  #       with:
+  #         heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #         heroku_app_name: "devops-web-app"
+  #         heroku_email: "lizokdanilok@gmail.com"
+  #         appdir: user-api
