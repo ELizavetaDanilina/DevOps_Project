@@ -38,8 +38,9 @@ jobs:
       - name: Start application
         run: |
           cd userapi
-          npm start
-          exit 1
+          npm start &
+          sleep 30 
+          kill $!
           
     services:
       redis-container:
