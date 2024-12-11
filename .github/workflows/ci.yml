@@ -35,10 +35,10 @@ jobs:
           cd userapi
           npm test
 
-      - name: Start application with timeout
+      - name: Start application
         run: |
           cd userapi
-          timeout 30s npm start
+          npm start
           exit 1
           
     services:
