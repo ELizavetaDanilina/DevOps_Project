@@ -20,4 +20,4 @@ RUN apk add --no-cache redis
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "redis-server --daemonize yes && npm start"]
+CMD [ "npm", "start" ]
