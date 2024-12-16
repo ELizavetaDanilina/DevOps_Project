@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user-api
+      app: userapi
   template:
     metadata:
       labels:
-        app: user-api
+        app: userapi
     spec:
       containers:
       - name: userapi
