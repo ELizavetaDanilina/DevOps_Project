@@ -10,7 +10,7 @@ RUN npm install
 COPY . .
 
 # Run the application with Redis
-FROM node:16-alpine
+FROM node:22-alpine
 
 WORKDIR /userapi
 
