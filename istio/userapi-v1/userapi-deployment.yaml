@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userapi-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userapi
+  template:
+    metadata:
+      labels:
+        app: userapi
+    spec:
+      containers:
+      - name: userapi
+        image: lizadan/userapi:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: VERSION
+          value: "v1" 
+        resources:
+          limits:
+            cpu: 400m 
+            memory: 1024Mi 
+          requests:
+            cpu: 250m 
+            memory: 512Mi 
