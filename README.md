@@ -169,32 +169,32 @@ Furthermore, Apache is loaded to the VM to run the application
   ```
 
 ***Screenshots***
-1. Vagrant status\
+1. Virtual box\
+   \
+   ![](./image/12-12-2024__18_49_30.jpg)
+   
+2. Vagrant status\
    \
    ![](./image/01-12-2024__18_58_24.jpg)
 
 3. Upload Playbooks\
    \
    ![](./image/01-12-2024__19_03_35.jpg)
-4. Vagrant provision\
-   \
-   ![](./image/01-12-2024__19_04_42.jpg)
 
-2. Vargant ssh result\
+4. Vargant ssh result\
    \
    ![](./image/01-12-2024__18_59_34.jpg)
-2. Result of the `ansible-playbook`\
+5. Result of the `ansible-playbook`\
    \
-   ![](./image/03-12-2024__23_23_04.jpg)
+   ![](./image/03-12-2024__23_23_26.jpg)
    \
    ![](./image/03-12-2024__23_23_04.jpg)
    \
    ![](./image/03-12-2024__23_23_16.jpg)
-   \
-   ![](./image/03-12-2024__23_23_26.jpg)
+   
    \
    ![](./image/03-12-2024__23_22_55.jpg)
-3. Result of the `curl`\
+6. Result of the `curl`\
    \
    ![](./image/03-12-2024__22_58_38.jpg)
    
@@ -209,36 +209,223 @@ Docker image and docker-compose.yml was created.
   ```
   docker up
   ```
-3. docker compose
-4. docker push lizadan/userapi:latest
-5. 
+3. Build Docker
+  ```
+  docker compose
+  ```
+5. Push to the Docker
+  ```
+  docker push lizadan/userapi:latest
+  ```
+6. Check health of the app
+  ```
+  curl http://localhost:3000/health
+  curl http://localhost:3000/liveness
+  curl http://localhost:3000/readiness
+  ```
+***Screenshots***
+1. DockerHub\
+  \
+  ![](./image/05-12-2024__22_38_15.jpg)
+  \
+  ![](./image/05-12-2024__22_38_56.jpg)
+  \
+  ![](./image/05-12-2024__22_39_08.jpg)
+  \
+  ![](./image/05-12-2024__22_39_47.jpg)
+   
+2. Docker logs\
+  \
+  ![](./image/05-12-2024__18_24_45.jpg)
 
-
-Create  file that will start your application
-
-- [Docker](https://docs.docker.com/get-docker/)
+3. Check health\
+  \
+  ![](./image/05-12-2024__18_29_21.jpg)
+  \
+  ![](./image/05-12-2024__18_29_37.jpg)
+  \
+  ![](./image/05-12-2024__18_29_46.jpg)
 
 ### Make docker orchestration using Kubernetes
-Install Kubernetes cluster using Minikube
 Create Kubernetes Manifest YAML files:
-deployments
-services
-persistent volume and persistent volume claim
+- deployments
+- services
+- persistent volume and persistent volume claim
 
+**Steps to make docker orchestration using Kubernetes**
+1. Install [Minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/).
+2. Start Minikube with:
+  ```
+  minikube start
+  ```
+Verify that everything is OK with:
+  ```
+  minikube status
+  ```
+3. Apply all files in the Kubernetes folder
+  ```
+  kubectl apply -f k8s/
+  ```
+4. Check Pods
+  ```
+  kubectl get pods
+  ```
+5. Check the userapi deployment name
+  ```
+  kubectl get deployment
+  ```
+6. Check health
+  ```
+  kubectl exec [userapi-deployment-name] --wget -qO- http://localhost:3000/health
+  kubectl exec [userapi-deployment-name] --wget -qO- http://localhost:3000/liveness
+  kubectl exec [userapi-deployment-name] --wget -qO- http://localhost:3000/readiness
+  ```
+***Screenshots***
+1. VirtualBox Minikube\
+   \
+   ![](./image/18-12-2024__16_44_59.jpg)
+2. Minikube status\
+   \
+   ![](./image/16-12-2024__18_20_40.jpg)
+3. Apply all files\
+   \
+   ![](./image/13-12-2024__21_18_26.jpg)
+4. Pod Status\
+   \
+   ![](./image/16-12-2024__19_18_10.jpg)
+5. Health Check\
+   \
+   ![](./image/16-12-2024__19_27_55.jpg)
+   
 ### Make a service mesh using Istio
-Deploy your application using Istio
-Create configuration:
-route requests between 2 different versions of your app
-traffic shifting between 2 different versions of your app
+Deploy your application using Istio and create configuration:
+- route requests between 2 different versions of the app
+- traffic shifting between 2 different versions of the app (80%/20%)
 
-### Implement Monitoring to your containerized application
-Install Prometheus and Grafana to your K8s cluster
+**Steps to Make a service mesh**
+1. Install [Istio](https://istio.io/docs/setup/getting-started/)
+2. Start minikube
+  ```
+  minikube start
+  ```
+3. Build 2 versions with different Dockerfile
+  ```
+  docker build -t lizadan/userapi:v1 -f ./istio/userapi-v1/Dockerfile .
+  docker build -t lizadan/userapi:v2 -f ./istio/userapi-v2/Dockerfile .
+  ```
+3. Apply al the files
+  ```
+  kubectl apply -f istio/
+  ```
+4. Check Pods
+  ```
+  kubectl get pods
+  ```
+5. Try to connect to the app
+  ```
+  curl http://userapi.default.svc.cluster.local/health
+  ```
 
+***Screenshots***
+1. Pods running\
+   \
+   ![](./image/19-12-2024__17_23_19.jpg)
+   
+### Implement Monitoring
 Set up monitoring with Prometheus:
-
-Prometheus should contact the application (eg. health check endpoint) and pull its status
-You should be able to see the status of the application on Prometheus
+- Prometheus should contact the application (eg. health check endpoint) and pull its status
+  
 Set up monitoring with Grafana:
-Link it to the Prometheus server and display the monitored applications
-Create alerts and trigger them by shutting down your applications.
-Note. You can imagine something different and set up monitoring (eg. memory usage, CPU time, ...)
+- Link it to the Prometheus server and display the monitored applications
+- Change information depends on the selected pod (add pod value in the `variables`)
+- Create alerts and trigger them by shutting down your applications.
+
+**Steps to implement monitoring**
+1. Install [Prometheus](https://istio.io/latest/docs/ops/integrations/prometheus/)
+
+2. Install [Grafana](https://istio.io/latest/docs/ops/integrations/grafana/)
+3. To start Grafana and Prometheus it is needed to open connection
+  ```
+  minikube tunnel
+  ```
+4. In different Powershell run command
+  ```
+  kubectl port-forward svc/prometheus-operated 9090:9090 -n prometheus
+  ```
+5. To open prometheus open the http://localhost:9090 link
+6. To run grafana
+  ```
+  minikube service grafana
+  ```
+The usual login and password to Grafana are `admin`
+
+***Screenshots***
+1. App health\
+  \
+   ![](./image/26-12-2024__20_11_23.jpg)
+   
+2. Grafana\
+  \
+   ![](./image/21-12-2024__16_20_21.jpg)
+  \
+   ![](./image/21-12-2024__21_13_23.jpg)
+3. Prometheus\
+  \
+   ![](./image/21-12-2024__21_48_28.jpg)
+  \
+   ![](./image/25-12-2024__18_18_38.jpg)
+  \
+   ![](./image/25-12-2024__18_19_03.jpg)
+  \
+   ![](./image/25-12-2024__18_23_44.jpg)
+   
+4. Dashboard\
+  \
+   ![](./image/27-12-2024__19_21_38.jpg)
+  \
+   ![](./image/27-12-2024__19_21_59.jpg)
+  \
+   ![](./image/27-12-2024__19_22_33.jpg)
+  \
+   ![](./image/27-12-2024__19_22_53.jpg)
+  \
+   ![](./image/27-12-2024__19_23_11.jpg)
+  \
+   ![](./image/27-12-2024__19_23_31.jpg)
+  \
+   ![](./image/27-12-2024__19_23_46.jpg)
+  \
+   ![](./image/27-12-2024__19_24_01.jpg)
+  \
+   ![](./image/27-12-2024__19_24_42.jpg)
+   
+8. Alerts\
+  \
+   ![](./image/27-12-2024__19_26_10.jpg)
+  \
+   ![](./image/27-12-2024__19_25_37.jpg)
+  \
+   ![](./image/27-12-2024__19_25_49.jpg)
+  \
+   ![](./image/27-12-2024__19_26_47.jpg)
+  \
+   ![](./image/27-12-2024__19_27_16.jpg)
+9. Trigger\
+  \
+   ![](./image/27-12-2024__19_33_01.jpg)
+  \
+   ![](./image/27-12-2024__19_33_17.jpg)
+  \
+   ![](./image/27-12-2024__19_33_37.jpg)
+  \
+   ![](./image/27-12-2024__19_33_50.jpg)
+10. Change pod value\
+  \
+   ![](./image/27-12-2024__19_36_36.jpg)
+  \
+   ![](./image/27-12-2024__19_36_22.jpg)
+  \
+   ![](./image/27-12-2024__19_40_18.jpg)
+
+   
+    
