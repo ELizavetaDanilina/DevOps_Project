@@ -32,65 +32,206 @@ The web application was created on NodeJS language with Redis database. Web appl
 - [Node.js](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 4. Install an IDE or a text editor, for example [VS Code](https://code.visualstudio.com/)
 5. Using CLI bash commands in your terminal (Terminal or Git Bash) navigate to the directory where you will store your project folder.
-  
-  `cd ~/path/to/your-root-project-directory`
+  ```
+  cd ~/path/to/your-root-project-directory
+  ```
   
 6. Navigate to the 'userapi' folder
+  ```
+  cd userapi
+  ```
   
-  `cd userapi`
-  
-7. Download project dependencies
-  
-  `npm install`
+8. Download project dependencies
+  ```
+  npm install
+  ```
   
 8. Run NPM script to test application
-
-  `npm test`
+  ```
+  npm test
+  ```
   
 9. Run NPM script to run the application
+  ```
+  npm start
+  ```
+   After that the application will be availabe by this link: [http://localhost:3000](http://localhost:3000).
+   Health check will be available by adding `/health` or `/liveness` ot `/rediness` in the end of the link.
+   Swagger UI will be available by adding `/api-docs`
 
-   `npm start`
+***Screenshots***
+1. Aplication tests\
+   \
+   ![](./image/27-11-2024__23_14_05.jpg)
 
-   After that the application will be availabe by this link: [http://localhost:3000](http://localhost:3000)
+2. Running application\
+   \
+   ![](./image/27-11-2024__23_14_53.jpg)
+
+3. Main page\
+   \
+   ![](./image/27-11-2024__23_15_11.jpg)
+   
+5. `/user` page (user's data)\
+   \
+   ![](./image/27-11-2024__23_15_32.jpg)
+   
+7. Health check\
+   \
+   ![](./image/27-11-2024__23_15_48.jpg)
+    \
+   ![](./image/03-12-2024__23_29_58.jpg)
+    \
+   ![](./image/03-12-2024__23_30_15.jpg)
+   
+9. Swagger UI\
+   \
+   ![](./image/27-11-2024__23_16_11.jpg)
 
 
 
+### CI/CD pipeline
+CI/CD pipeline was made on GitHub Actions. CD part added to code but not working due to Heroku’s paid services. Secrets of the Heroku account also added in the repository secrets.
+
+The Continuous Integration part runs unit tests and starts the application for 30 seconds. A Redis container is spun up as a service for the tests to use. The Continuous Delivery stage deploys the application to Heroku using a Heroku API key. 
+
+Use GitHub Actions to start a workflow.
+
+***Screenshots***
+1. CI/CD pipeline result\
+   \
+   ![](./image/11-12-2024__17_50_03.jpg)
+
+### IaC approach
+
+A virtual environment was configured on Linux destribution and provisioned with Ansible, which includes installing and running:
+- language runtime
+- database
+- application
+- health check of the application
+
+Furthermore, Apache is loaded to the VM to run the application
+
+**Steps to run the VM and check the health of the application**
+1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
+2. Install [Vagrant](https://www.vagrantup.com/downloads.html).
+3. Create a virtual machine
+  ```
+  vagrant up
+  ```
+4. Download the `centos/7` Vagrant box for the Virtualbox provider, run:
+  ```
+  vagrant box add centos/7
+  ```
+  It will output:
+  ```
+  ==> box: Loading metadata for box 'centos/7'
+     box: URL: https://vagrantcloud.com/centos/7
+  This box can work with multiple providers! The providers that it can work with are listed below. Please review the list and   choose
+  the provider you will be working with.
+  
+  1) hyperv
+  2) libvirt
+  3) virtualbox
+  4) vmware_desktop
+  
+  Enter your choice: 3
+  ```
+5. Go to the /iac directory
+  ```
+  cd iac
+  ```
+6. Run command
+  ```
+  vagrant up
+  ```
+7. Upload playbooks
+  ```
+  vagrant upload playbooks /vagrant/playbooks app_server
+  ```
+8. Run provisioning script
+  ```
+  vagrant provision
+  ```
+9. Run vagrant
+  ```
+  vagrant ssh
+  ```
+10. Run ansible-playbooks. It will also run the health checks.
+  ```
+  ansible-playbook -vvvv /vagrant/playbook/run
+  ```
+11. To check separately the connection to the health points
+  ```
+  curl http://localhost:3000/health
+  curl http://localhost:3000/liveness
+  curl http://localhost:3000/readiness
+  ```
+
+***Screenshots***
+1. Vagrant status\
+   \
+   ![](./image/01-12-2024__18_58_24.jpg)
+
+3. Upload Playbooks\
+   \
+   ![](./image/01-12-2024__19_03_35.jpg)
+4. Vagrant provision\
+   \
+   ![](./image/01-12-2024__19_04_42.jpg)
+
+2. Vargant ssh result\
+   \
+   ![](./image/01-12-2024__18_59_34.jpg)
+2. Result of the `ansible-playbook`\
+   \
+   ![](./image/03-12-2024__23_23_04.jpg)
+   \
+   ![](./image/03-12-2024__23_23_04.jpg)
+   \
+   ![](./image/03-12-2024__23_23_16.jpg)
+   \
+   ![](./image/03-12-2024__23_23_26.jpg)
+   \
+   ![](./image/03-12-2024__23_22_55.jpg)
+3. Result of the `curl`\
+   \
+   ![](./image/03-12-2024__22_58_38.jpg)
+   
+
+### Docker image and container orchestration using Docker Compose
+
+Docker image and docker-compose.yml was created.
+
+**Steps to create the Docker image**
+1. Install [Docker Desktop](https://www.docker.com/get-started)
+2. Start Docker
+  ```
+  docker up
+  ```
+3. docker compose
+4. docker push lizadan/userapi:latest
+5. 
 
 
-4. Apply CI/CD pipeline
-Configure and apply CI/CD (including deployment) pipeline using any platforms (GitHub Actions, GitLab CI/CD, Jenkins, Netlify, Heroku, etc.).
-
-Note! If the chosen deployment platform (like Heroku) requires a subscription to make use of their database service to connect to your app, you can skip using this service. In this case, your application won't be running properly, but it must successfully display the homepage.
-
-3. Configure and provision a virtual environment and run your application using the IaC approach
-Configure with Vagrant: 1 VM running on any Linux distribution
-Provision the VM with Ansible, which includes installing and running:
-language runtime
-database
-your application (use sync folders)
-health check of your application
-- [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-5. Build Docker image of your application
-Create a Docker image of your application
-Push the image to Docker Hub
-Note! You must ignore all the files and folders that do not need to be included in the image.
-
-6. Make container orchestration using Docker Compose
-Create docker-compose.yml file that will start your application
+Create  file that will start your application
 
 - [Docker](https://docs.docker.com/get-docker/)
-7. Make docker orchestration using Kubernetes
+
+### Make docker orchestration using Kubernetes
 Install Kubernetes cluster using Minikube
 Create Kubernetes Manifest YAML files:
 deployments
 services
 persistent volume and persistent volume claim
-8. Make a service mesh using Istio
+
+### Make a service mesh using Istio
 Deploy your application using Istio
 Create configuration:
 route requests between 2 different versions of your app
 traffic shifting between 2 different versions of your app
-9. Implement Monitoring to your containerized application
+
+### Implement Monitoring to your containerized application
 Install Prometheus and Grafana to your K8s cluster
 
 Set up monitoring with Prometheus:
