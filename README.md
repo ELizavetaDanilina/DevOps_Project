@@ -1,4 +1,5 @@
 # DevOps Final Project
+_Author: Danilina Elizaveta_
 
 ## Introduction
 
