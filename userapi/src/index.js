@@ -4,8 +4,11 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 const userRoutes = require('./routes/user');
 const db = require('./dbClient');
+const promBundle = require('express-prom-bundle');
+const client = require('prom-client');
 require('dotenv').config();
 
+// Handle uncaught exceptions and unhandled rejections for better error handling
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
   process.exit(1);
@@ -16,7 +19,7 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-
+// Set the port number
 let port = 3000; 
 if (process.env.PORT) {
   try {
@@ -32,10 +35,11 @@ if (process.env.PORT) {
 }
 
 const app = express();
-app.use(bodyParser.json());
-app.use('/user', userRoutes);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(bodyParser.json()); // Enable JSON body parsing
+app.use('/user', userRoutes); // Mount the user routes
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument)); // Mount Swagger UI
 
+// Health check endpoints
 app.get('/health', (req, res) => {
   res.send('OK');
 });
@@ -48,10 +52,12 @@ app.get('/liveness', (req, res) => {
   res.send('OK');
 });
 
+// Handle database errors
 db.on("error", (err) => {
   console.error(err)
 })
 
+// Enable URL-encoded body parsing
 app.use(bodyParser.urlencoded({
   extended: false
 }))
