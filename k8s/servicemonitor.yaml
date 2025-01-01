@@ -1,0 +1,15 @@
+   apiVersion: monitoring.coreos.com/v1
+   kind: ServiceMonitor
+   metadata:
+     name: userapi-monitor
+     namespace: default 
+   spec:
+     selector:
+       matchLabels:
+         app: userapi 
+     endpoints:
+     - port: web
+       path: /health 
+       interval: 30s 
+       scheme: http 
+
