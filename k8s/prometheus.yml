@@ -1,0 +1,25 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 15s
+scrape_configs:
+  - job_name: 'userapi'
+    kubernetes_sd_configs:
+      - role: service
+        namespaces:
+          names:
+            - userapi
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        target_label: job
+      - source_labels: [__address]
+        target_label: instance
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - target_label: __address
+        replacement: '${instance}:3000'
+  
+  - job_name: 'kube-state-metrics'
+    static_configs:
+      - targets: ['<ip-address>:<port>']
+   
+
