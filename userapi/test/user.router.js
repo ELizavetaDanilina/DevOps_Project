@@ -18,6 +18,7 @@ describe('User API', () => {
         db.quit()
       })
 
+    // Create user
     describe('POST /user', () => {
 
         it('should create a new user', (done) => {
@@ -60,6 +61,7 @@ describe('User API', () => {
           })
     });
 
+    // Get users
     describe('GET /user', () => {
         it('should return all users', (done) => {
             const user1 = { 
@@ -146,6 +148,7 @@ describe('User API', () => {
         });
     });
 
+    // Update user
     describe('PUT /user/:username', () => {
         it('should update a user by username', (done) => {
             const user = { 
@@ -200,6 +203,7 @@ describe('User API', () => {
         });
     });
 
+    // Delete user
     describe('DELETE /user/:username', () => {
         it('should delete a user by username', (done) => {
             const user = { 
