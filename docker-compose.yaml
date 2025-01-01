@@ -1,18 +1,27 @@
-    services:
-     app:
-       build:
-         context: ./userapi
-         dockerfile: Dockerfile 
-       ports:
-         - "3000:3000"
-       depends_on:
-         - redis
-       environment:
-         REDIS_HOST: redis
-         REDIS_PORT: 6379
-         API_PORT: 3000
-     redis:
-       image: redis:alpine
-       ports:
-         - "6379:6379"
-   
+services:
+  app:
+    build:
+      context: ./userapi
+      dockerfile: Dockerfile 
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      API_PORT: 3000
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"    
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./k8s/prometheus.yml:/etc/prometheus/prometheus.yml"
+  grafana:
+    image: grafana/grafana-oss
+    ports:
+      - "3001:3000"
