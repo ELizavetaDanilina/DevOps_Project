@@ -28,20 +28,19 @@ The web application was created on NodeJS language with Redis database. Web appl
 > - Windows: https://redis.com/ebook/appendix-a/a-3-installing-on-windows/a-3-2-installing-redis-on-window/
 > - MacOS: brew install redis or https://redis.io/topics/quickstart
 > - Linux or MacOS: https://redis.io/topics/quickstart
-3. Install the following software on your computer:
-- [Node.js](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+3. Install [Node.js](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 4. Install an IDE or a text editor, for example [VS Code](https://code.visualstudio.com/)
-5. Using CLI bash commands in your terminal (Terminal or Git Bash) navigate to the directory where you will store your project folder.
+5. Using CLI bash commands in the terminal (Terminal or Git Bash) navigate to the directory where the project folder will be stored.
   ```
   cd ~/path/to/your-root-project-directory
   ```
   
-6. Navigate to the 'userapi' folder
+6. Navigate to the `userapi` folder
   ```
   cd userapi
   ```
   
-8. Download project dependencies
+7. Download project dependencies
   ```
   npm install
   ```
@@ -55,12 +54,13 @@ The web application was created on NodeJS language with Redis database. Web appl
   ```
   npm start
   ```
-   After that the application will be availabe by this link: [http://localhost:3000](http://localhost:3000).
-   Health check will be available by adding `/health` or `/liveness` ot `/rediness` in the end of the link.
-   Swagger UI will be available by adding `/api-docs`
+   After that the application will be available by this link: [http://localhost:3000](http://localhost:3000).\
+   Health check will be available by adding `/health` or `/liveness` or `/readiness` in the end of the link.\
+   Swagger UI will be available by adding `/api-docs`.\
+   Data of users will be available by adding `/user`.
 
 ***Screenshots***
-1. Aplication tests\
+1. Application tests\
    \
    ![](./image/27-11-2024__23_14_05.jpg)
 
@@ -91,7 +91,7 @@ The web application was created on NodeJS language with Redis database. Web appl
 
 
 ### CI/CD pipeline
-CI/CD pipeline was made on GitHub Actions. CD part added to code but not working due to Heroku’s paid services. Secrets of the Heroku account also added in the repository secrets.
+CI/CD pipeline was made on [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions). CD part added to code but not working due to [Heroku’s](https://www.heroku.com/) paid services. Secrets of the Heroku account also added in the repository secrets.
 
 The Continuous Integration part runs unit tests and starts the application for 30 seconds. A Redis container is spun up as a service for the tests to use. The Continuous Delivery stage deploys the application to Heroku using a Heroku API key. 
 
@@ -104,13 +104,13 @@ Use GitHub Actions to start a workflow.
 
 ### IaC approach
 
-A virtual environment was configured on Linux destribution and provisioned with Ansible, which includes installing and running:
+A virtual environment was configured on Linux distribution and provisioned with [Ansible](https://docs.ansible.com/ansible/latest/getting_started/introduction.html), which includes installing and running:
 - language runtime
 - database
 - application
 - health check of the application
 
-Furthermore, Apache is loaded to the VM to run the application
+Furthermore, [Apache2](https://httpd.apache.org/) is loaded to the VM to run the application
 
 **Steps to run the VM and check the health of the application**
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
@@ -247,7 +247,7 @@ Docker image and docker-compose.yml was created.
   ![](./image/05-12-2024__18_29_46.jpg)
 
 ### Make docker orchestration using Kubernetes
-Create Kubernetes Manifest YAML files:
+Create [Kubernetes](https://kubernetes.io/) Manifest YAML files:
 - deployments
 - services
 - persistent volume and persistent volume claim
@@ -313,7 +313,7 @@ Deploy your application using Istio and create configuration:
   docker build -t lizadan/userapi:v1 -f ./istio/userapi-v1/Dockerfile .
   docker build -t lizadan/userapi:v2 -f ./istio/userapi-v2/Dockerfile .
   ```
-3. Apply al the files
+3. Apply all the files
   ```
   kubectl apply -f istio/
   ```
@@ -344,20 +344,21 @@ Set up monitoring with Grafana:
 1. Install [Prometheus](https://istio.io/latest/docs/ops/integrations/prometheus/)
 
 2. Install [Grafana](https://istio.io/latest/docs/ops/integrations/grafana/)
-3. To start Grafana and Prometheus it is needed to open connection
+3. To start Grafana and Prometheus it is needed to start Minikube and open connection
   ```
+  minikube start
   minikube tunnel
   ```
 4. In different Powershell run command
   ```
   kubectl port-forward svc/prometheus-operated 9090:9090 -n prometheus
   ```
-5. To open prometheus open the http://localhost:9090 link
+5. To open prometheus open the `http://localhost:9090` link
 6. To run grafana
   ```
   minikube service grafana
   ```
-The usual login and password to Grafana are `admin`
+The login and password for Grafana is `admin`
 
 ***Screenshots***
 1. App health\
